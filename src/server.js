@@ -31,6 +31,15 @@ app.get('/api/articles/:name', async (req, res) => {
     }, res);
 })
 
+app.get('/api/comments/:name', async (req, res) => {
+    withDB(async (db) => {
+        const articleName = req.params.name;
+        // Cannot use a session that has ended, because of `db.collection('articles').findOne({ name: articleName })`
+        const comments = await db.collection('articles').findOne({ name: articleName }).comments
+        res.status(200).json(comments);
+    }, res);
+})
+
 app.post('/api/articles/:name/upvote', (req, res) => {
     withDB(async (db) => {
         const articleName = req.params.name;
